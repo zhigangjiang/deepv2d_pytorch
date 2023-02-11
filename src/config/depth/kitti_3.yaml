@@ -1,0 +1,54 @@
+COMMENT: 'base_line'
+RUN:
+  SEED: 123
+  DEVICE: 'cuda:0'
+
+MODEL:
+  NAME: 'DepthNet'
+  ARGS: [ {
+    'image_size': [ 192, 1088 ],
+    'backbone': {
+      'extractor': 'res_hg',
+    },
+    'mode': 'avg',
+  } ]
+
+DATASET:
+  NAME: 'KittiDataset'
+  BATCH_SIZE: 4
+  NUM_WORKERS: 8
+  PIN_MEMORY: False
+  ARGS: [ {
+    'data_dir': 'src/dataset/kitti',
+    'split_path': {
+      'train': 'src/dataset/kitti/train_scenes_eigen.txt',
+      'test': 'src/dataset/kitti/fast_test_scenes_eigen.txt'
+    },
+    load_cache: True,
+    use_aug: True
+  } ]
+
+TRAIN:
+  EPOCHS: 100
+  BASE_LR: 1e-4
+  SAVE_FREQ: 0
+  SAVE_BEST: True
+  OPTIMIZER:
+    NAME: 'adam'
+  RESUME_LAST: False
+  LOSS:
+    NAME: 'DepthLoss'
+    ARGS: [ {
+      'smooth_w': 0.02,
+    } ]
+  CRITERION:
+    NAME: 'DepthACC'
+    ARGS: [ {
+      'scale': 0.1,
+    } ]
+  VIS:
+    NAME: 'DepthVIS'
+    ARGS: [ {
+      'show_indexes': [ 60, 80 ],
+      'max_b': 1
+    } ]

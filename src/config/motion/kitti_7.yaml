@@ -1,0 +1,46 @@
+COMMENT: 'lr1e-3'
+RUN:
+  SEED: 123
+  DEVICE: 'cuda:0'
+
+MODEL:
+  NAME: 'MotionNet'
+  ARGS: [ {
+    'image_size': [ 192, 1088 ],
+    'backbone': {
+      'pose': 'cnn',
+    },
+    'pose_len': 6,
+    'mode': 'keyframe',
+    'pose_iter': 0
+  } ]
+
+DATASET:
+  NAME: 'KittiDataset'
+  BATCH_SIZE: 16
+  NUM_WORKERS: 8
+  PIN_MEMORY: False
+  ARGS: [ {
+    'data_dir': 'src/dataset/kitti',
+    'split_path': {
+      'train': 'src/dataset/kitti/train_scenes_eigen.txt',
+      'test': 'src/dataset/kitti/test_scenes_eigen.txt'
+    },
+    load_cache: True
+  } ]
+
+TRAIN:
+  EPOCHS: 100
+  BASE_LR: 1e-3
+  SAVE_FREQ: 0
+  SAVE_BEST: True
+  OPTIMIZER:
+    NAME: 'sgd'
+  RESUME_LAST: False
+  LOSS:
+    NAME: 'PoseLoss'
+    ARGS: [ {
+      'residual_w': 0,
+      'weight_w': 0,
+      'dt_project_mask': False
+    } ]

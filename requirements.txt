@@ -1,0 +1,13 @@
+torch==1.9.0+cu111
+torchvision==0.10.0+cu111
+open3d
+matplotlib
+scipy
+PyYAML
+Pillow
+opencv-python
+tfrecord
+yacs
+tensorboard
+termcolor
+einops
